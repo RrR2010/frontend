@@ -18,6 +18,12 @@ export type LoginResponse = {
 // Response from /auth/select-tenant
 export type SelectTenantResponse = void;
 
+// Response from /auth/me
+export type CurrentUserResponse = {
+  user: User;
+  tenant: Tenant;
+};
+
 // Error type from backend
 export type ApiError = {
   statusCode: number;
@@ -31,4 +37,31 @@ export type AuthState = {
   selectedTenant: Tenant | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+};
+
+// Session data (minimal - no tokens exposed)
+export type Session = {
+  id: string;
+  deviceInfo?: string;
+  ipAddress?: string;
+  createdAt: string;
+  lastUsedAt: string;
+  isActive: boolean;
+};
+
+// Response from GET /auth/sessions
+export type SessionsResponse = {
+  sessions: Session[];
+};
+
+// Response from POST /auth/refresh
+export type RefreshTokenResponse = {
+  accessToken: string;
+  expiresIn: number;
+};
+
+// Response from DELETE /auth/sessions/:id
+export type SessionRevocationResponse = {
+  sessionId: string;
+  revokedAt: string;
 };

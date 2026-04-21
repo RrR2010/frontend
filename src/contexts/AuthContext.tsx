@@ -1,7 +1,7 @@
 'use client'
 
 import {createContext, useContext, useState, useEffect, type ReactNode} from "react";
-import {login as apiLogin, selectTenant as apiSelectTenant, logout as apiLogout, LoginParams} from "@/lib/api/auth";
+import {login as apiLogin, selectTenant as apiSelectTenant, logout as apiLogout, getCurrentUser, LoginParams} from "@/lib/api/auth";
 import {User, Tenant, LoginResponse} from "@/types/auth";
 
 type AuthContextType = {
@@ -35,9 +35,21 @@ export function AuthProvider({children}: {children: ReactNode}){
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Check for existing cookies/session - for now, assume user is not authenticated
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsLoading(false);
+    const restoreSession = async () => {
+      try {
+        const response = await getCurrentUser();
+        setUser(response.user);
+        setTenant(response.tenant);
+        setTenants([response.tenant]);
+      } catch {
+        setUser(null);
+        setTenant(null);
+        setTenants([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    restoreSession();
   }, [])
 
   const login = async (params: LoginParams): Promise<LoginResponse> => {

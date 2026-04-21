@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { LoginResponse, SelectTenantResponse, User, Tenant } from '@/types/auth';
+import type { LoginResponse, SelectTenantResponse, CurrentUserResponse } from '@/types/auth';
 
 export type LoginParams = {
   email: string;
@@ -38,4 +38,15 @@ export async function selectTenant(params: SelectTenantParams): Promise<SelectTe
  */
 export async function logout(): Promise<void> {
   await api.post('/auth/logout');
+}
+
+/**
+ * Get current authenticated user
+ * GET /auth/me
+ * Returns { user, tenant } if token is valid
+ * Returns 401 if token is invalid
+ */
+export async function getCurrentUser(): Promise<CurrentUserResponse> {
+  const response = await api.get<CurrentUserResponse>('/auth/me');
+  return response.data;
 }
