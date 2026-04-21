@@ -87,7 +87,9 @@ export function AuthProvider({children}: {children: ReactNode}){
     user,
     tenant,
     tenants,
-    isAuthenticated: !!user && !!tenant,
+    // TODO: EPIC_005 - Refactor for platform-only users
+    // Platform users (with platformRoles) don't need tenant
+    isAuthenticated: !!user && (!!tenant || (user?.platformRoles?.length ?? 0) > 0),
     isLoading,
     login,
     selectTenant,
