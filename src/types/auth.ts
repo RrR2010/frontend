@@ -55,10 +55,8 @@ export type SessionsResponse = {
 };
 
 // Response from POST /auth/refresh
-export type RefreshTokenResponse = {
-  accessToken: string;
-  expiresIn: number;
-};
+// Note: accessToken is now set as HttpOnly cookie, not in response body
+export type RefreshTokenResponse = {};
 
 // Response from DELETE /auth/sessions/:id
 export type SessionRevocationResponse = {

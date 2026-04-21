@@ -61,7 +61,8 @@ export async function getCurrentUser(): Promise<CurrentUserResponse> {
 /**
  * Refresh access token
  * POST /auth/refresh
- * Returns { accessToken, expiresIn }
+ * Returns { }
+ * Side effect: Backend sets accessToken cookie as HttpOnly
  */
 export async function refreshToken(): Promise<RefreshTokenResponse> {
   const response = await api.post<RefreshTokenResponse>('/auth/refresh');
