@@ -1,5 +1,12 @@
 import { api } from './client';
-import type { LoginResponse, SelectTenantResponse, CurrentUserResponse } from '@/types/auth';
+import type {
+  LoginResponse,
+  SelectTenantResponse,
+  CurrentUserResponse,
+  RefreshTokenResponse,
+  SessionsResponse,
+  SessionRevocationResponse,
+} from '@/types/auth';
 
 export type LoginParams = {
   email: string;
@@ -48,5 +55,45 @@ export async function logout(): Promise<void> {
  */
 export async function getCurrentUser(): Promise<CurrentUserResponse> {
   const response = await api.get<CurrentUserResponse>('/auth/me');
+  return response.data;
+}
+
+/**
+ * Refresh access token
+ * POST /auth/refresh
+ * Returns { accessToken, expiresIn }
+ */
+export async function refreshToken(): Promise<RefreshTokenResponse> {
+  const response = await api.post<RefreshTokenResponse>('/auth/refresh');
+  return response.data;
+}
+
+/**
+ * Get all sessions for current user
+ * GET /auth/sessions
+ * Returns { sessions[] }
+ */
+export async function getSessions(): Promise<SessionsResponse> {
+  const response = await api.get<SessionsResponse>('/auth/sessions');
+  return response.data;
+}
+
+/**
+ * Revoke a specific session
+ * DELETE /auth/sessions/:id
+ * Returns { sessionId, revokedAt }
+ */
+export async function revokeSession(sessionId: string): Promise<SessionRevocationResponse> {
+  const response = await api.delete<SessionRevocationResponse>(`/auth/sessions/${sessionId}`);
+  return response.data;
+}
+
+/**
+ * Revoke all sessions (logout everywhere)
+ * DELETE /auth/sessions
+ * Returns { sessionId, revokedAt }
+ */
+export async function revokeAllSessions(): Promise<SessionRevocationResponse> {
+  const response = await api.delete<SessionRevocationResponse>('/auth/sessions');
   return response.data;
 }
