@@ -4,26 +4,21 @@ import { useState } from 'react';
 import {SessionsList} from '@/components/sessions';
 import {revokeAllSessions} from '@/lib/api';
 import {Button} from '@/components/ui/button';
+import {toast} from 'sonner';
 
 export default function SessionsPage() {
-  const [message, setMessage] = useState('');
-  const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogoutAll = async () => {
     if (!confirm('Sair de todos os dispositivos?')) return;
 
     setIsLoading(true);
-    setIsError(false);
-    setMessage('');
 
     try {
       await revokeAllSessions();
-      setMessage('Deslogado de todos os dispositivos');
-      setIsError(false);
+      toast.success('Deslogado de todos os dispositivos');
     } catch {
-      setMessage('Falha ao deslogar');
-      setIsError(true);
+      toast.error('Falha ao deslogar');
     } finally {
       setIsLoading(false);
     }
@@ -41,12 +36,6 @@ export default function SessionsPage() {
           {isLoading ? 'Saindo...' : 'Sair de todos'}
         </Button>
       </div>
-
-      {message && (
-        <p className={`text-sm ${isError ? 'text-destructive' : 'text-green-600'}`}>
-          {message}
-        </p>
-      )}
 
       <SessionsList />
     </div>
