@@ -57,7 +57,13 @@ export function AuthProvider({children}: {children: ReactNode}){
     setUser(response.user);
     setTenants(response.tenants);
     
-    // Single tenant
+    // Platform user - already authenticated (no tenant selection needed)
+    if (response.tenants.length === 0 && response.user.platformRoles && response.user.platformRoles.length > 0) {
+      // User is already authenticated with tokens set in cookies
+      return response;
+    }
+    
+    // Single tenant - auto-select
     if (response.tenants.length === 1) {
       await selectTenant(response.tenants[0].id);
     }

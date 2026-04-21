@@ -1,7 +1,10 @@
+export type PlatformRole = 'ADMIN' | 'USER';
+
 export type User = {
   id: string;
   name: string;
   email: string;
+  platformRoles: PlatformRole[];
 };
 
 export type Tenant = {
