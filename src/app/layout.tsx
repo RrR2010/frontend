@@ -2,6 +2,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import '@/app/globals.css'
 import { Geist, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { Toaster } from "sonner";
 
 const interHeading = Inter({subsets:['latin'],variable:'--font-heading'});
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children: children }: { children: React.Rea
         <AuthProvider>
           {children}
         </AuthProvider>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   )
