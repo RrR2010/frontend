@@ -26,6 +26,6 @@ Links and IDs must match canonical filenames exactly.
 | TASK_004_011  | [[EPIC_004]] | Update Auth Types             | backlog | dev      | high     | [[frontend/docs/tasks/TASK_004_011]] |
 | TASK_004_012  | [[EPIC_004]] | Add Session API Functions     | backlog | dev      | high     | [[frontend/docs/tasks/TASK_004_012]] |
 | TASK_004_013  | [[EPIC_004]] | Implement Session Hooks       | done    | dev      | high     | [[frontend/docs/tasks/TASK_004_013]] |
-| TASK_004_014  | [[EPIC_004]] | Create Session List Component | backlog | dev      | medium   | [[frontend/docs/tasks/TASK_004_014]] |
+| TASK_004_014  | [[EPIC_004]] | Create Session List Component | done    | dev      | medium   | [[frontend/docs/tasks/TASK_004_014]] |
 | TASK_004_015  | [[EPIC_004]] | Add Session Management Page  | backlog | dev      | medium   | [[frontend/docs/tasks/TASK_004_015]] |
 | TASK_004_016  | [[EPIC_004]] | Add Admin Session Mgmt Page  | backlog | dev      | medium   | [[frontend/docs/tasks/TASK_004_016]] |
