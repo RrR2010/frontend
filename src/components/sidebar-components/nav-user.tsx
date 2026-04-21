@@ -67,6 +67,9 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
+                <a href="/sessoes">Sessões</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
                 <span>Perfil</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
