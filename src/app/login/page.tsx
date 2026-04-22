@@ -33,11 +33,17 @@ export default function LoginPage() {
 
     try {
       const response = await login({ email, password })
-      const availableTenants = response.availableContexts.tenants || []
-      if (response.nextStepHint === 'select-tenant' && availableTenants.length > 1) {
-        router.push("/select-tenant")
-      } else {
-        router.push("/home")
+
+      // Use explicit scope from backend
+      if (response.scope === 'platform') {
+        router.push('/admin')  // platform users → platform home
+      } else if (response.scope === 'tenant') {
+        const availableTenants = response.availableContexts.tenants || []
+        if (availableTenants.length > 1) {
+          router.push('/select-tenant')  // multi-tenant → selection
+        } else {
+          router.push('/home')  // single-tenant
+        }
       }
     } catch (err) {
       setError("Email ou senha incorretos")
