@@ -33,7 +33,8 @@ export default function LoginPage() {
 
     try {
       const response = await login({ email, password })
-      if (response.tenants.length > 1) {
+      const availableTenants = response.availableContexts.tenants || []
+      if (response.nextStepHint === 'select-tenant' && availableTenants.length > 1) {
         router.push("/select-tenant")
       } else {
         router.push("/home")

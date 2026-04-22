@@ -1,3 +1,12 @@
+// Scope types for authentication flow
+export type AuthScope = 'platform' | 'tenant';
+export type NextStepHint = 'direct-login' | 'select-tenant';
+
+// Available contexts after login
+export type AvailableContexts = {
+  tenants?: { tenantId: string; tenantName: string }[];
+};
+
 export type PlatformRole = 'ADMIN' | 'USER';
 
 export type User = {
@@ -15,7 +24,9 @@ export type Tenant = {
 // Response from /auth/login
 export type LoginResponse = {
   user: User;
-  tenants: Tenant[];
+  scope: AuthScope;
+  availableContexts: AvailableContexts;
+  nextStepHint: NextStepHint;
 };
 
 // Response from /auth/select-tenant
@@ -25,6 +36,7 @@ export type SelectTenantResponse = void;
 export type CurrentUserResponse = {
   user: User;
   tenant: Tenant;
+  scope: AuthScope;
 };
 
 // Error type from backend
@@ -34,8 +46,10 @@ export type ApiError = {
   code: string;
 };
 
+// Auth state for context (scope-aware)
 export type AuthState = {
   user: User | null;
+  scope: AuthScope | null;
   tenants: Tenant[];
   selectedTenant: Tenant | null;
   isAuthenticated: boolean;

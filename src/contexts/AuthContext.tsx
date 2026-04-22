@@ -2,11 +2,12 @@
 
 import {createContext, useContext, useState, useEffect, type ReactNode} from "react";
 import {login as apiLogin, selectTenant as apiSelectTenant, logout as apiLogout, getCurrentUser, LoginParams} from "@/lib/api/auth";
-import {User, Tenant, LoginResponse} from "@/types/auth";
+import {User, Tenant, LoginResponse, AuthScope} from "@/types/auth";
 
 type AuthContextType = {
   user: User | null
   tenant: Tenant | null
+  scope: AuthScope | null
   tenants: Tenant[]
   isAuthenticated: boolean
   isLoading: boolean
@@ -18,6 +19,7 @@ type AuthContextType = {
 const defaultValues: AuthContextType = {
   user: null,
   tenant: null,
+  scope: null,
   tenants: [],
   isAuthenticated: false,
   isLoading: true,
@@ -31,6 +33,7 @@ const AuthContext = createContext<AuthContextType>(defaultValues);
 export function AuthProvider({children}: {children: ReactNode}){
   const [user, setUser] = useState<User | null>(null);
   const [tenant, setTenant] = useState<Tenant | null>(null);
+  const [scope, setScope] = useState<AuthScope | null>(null);
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,10 +43,12 @@ export function AuthProvider({children}: {children: ReactNode}){
         const response = await getCurrentUser();
         setUser(response.user);
         setTenant(response.tenant);
+        setScope(response.scope);
         setTenants([response.tenant]);
       } catch {
         setUser(null);
         setTenant(null);
+        setScope(null);
         setTenants([]);
       } finally {
         setIsLoading(false);
@@ -55,17 +60,21 @@ export function AuthProvider({children}: {children: ReactNode}){
   const login = async (params: LoginParams): Promise<LoginResponse> => {
     const response = await apiLogin(params);
     setUser(response.user);
-    setTenants(response.tenants);
+    setScope(response.scope);
+    
+    // Convert availableContexts.tenants to Tenant format
+    const availableTenants = response.availableContexts.tenants || [];
+    const tenantsList: Tenant[] = availableTenants.map(tc => ({ id: tc.tenantId, name: tc.tenantName }));
+    setTenants(tenantsList);
     
     // Platform user - already authenticated (no tenant selection needed)
-    if (response.tenants.length === 0 && response.user.platformRoles && response.user.platformRoles.length > 0) {
-      // User is already authenticated with tokens set in cookies
+    if (response.scope === 'platform') {
       return response;
     }
     
     // Single tenant - auto-select
-    if (response.tenants.length === 1) {
-      await selectTenant(response.tenants[0].id);
+    if (availableTenants.length === 1) {
+      await selectTenant(availableTenants[0].tenantId);
     }
     return response;
   }
@@ -80,16 +89,17 @@ export function AuthProvider({children}: {children: ReactNode}){
     await apiLogout();
     setUser(null);
     setTenant(null);
+    setScope(null);
     setTenants([]);
   }
   
   const value: AuthContextType = {
     user,
     tenant,
+    scope,
     tenants,
-    // TODO: EPIC_005 - Refactor for platform-only users
-    // Platform users (with platformRoles) don't need tenant
-    isAuthenticated: !!user && (!!tenant || (user?.platformRoles?.length ?? 0) > 0),
+    // Authenticated if user exists and either platform scope or tenant selected
+    isAuthenticated: !!user && (scope === 'platform' || !!tenant),
     isLoading,
     login,
     selectTenant,
@@ -98,6 +108,7 @@ export function AuthProvider({children}: {children: ReactNode}){
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 
 }
-  export function useAuth() {
-    return useContext(AuthContext);
-  }
+
+export function useAuth() {
+  return useContext(AuthContext);
+}
